@@ -1,5 +1,5 @@
 # Clyve
-A simple client that allows you to use AWS S3 as a database. It’s a lightweight solution for quick MVPs or proof-of-concepts, letting you store, retrieve, and manage JSON objects without a complex database setup. While it’s not ideal for production-grade requirements, it leverages S3’s low cost, durability, and scalability, making it easy to handle structured data directly in a bucket using straightforward CRUD operations.
+A lightweight client for using AWS S3 as a database. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s affordability, durability, and scalability, enabling simple CRUD operations on structured data.
 
 ## Key Features
 - 🕒 Quick to prototype and iterate with.
