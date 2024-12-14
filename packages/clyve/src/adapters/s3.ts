@@ -15,15 +15,22 @@ import {
 } from "../errors.js";
 import { Model } from "../model.js";
 
-export type CreateS3AdapterParams = [s3Client: S3Client, bucket: string];
+export type S3AdapterConstructorParams = [s3Client: S3Client, bucket: string];
 
-export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
-  const [client, bucket] = args;
+export class S3Adapter implements Adapter {
+  private client: S3Client;
+  private bucket: string;
 
-  async function getByKey(key: string) {
-    const response = await client.send(
+  constructor(...args: S3AdapterConstructorParams) {
+    const [s3Client, bucket] = args;
+    this.client = s3Client;
+    this.bucket = bucket;
+  }
+
+  async getByKey(key: string) {
+    const response = await this.client.send(
       new GetObjectCommand({
-        Bucket: bucket,
+        Bucket: this.bucket,
         Key: key,
       })
     );
@@ -36,15 +43,15 @@ export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
     return JSON.parse(string);
   }
 
-  async function getById(collection: string, id: string) {
-    return await getByKey(`${collection}/${id}.json`);
+  async getById(collection: string, id: string) {
+    return await this.getByKey(`${collection}/${id}.json`);
   }
 
-  async function exists(collection: string, id: string) {
+  async exists(collection: string, id: string) {
     try {
-      await client.send(
+      await this.client.send(
         new HeadObjectCommand({
-          Bucket: bucket,
+          Bucket: this.bucket,
           Key: `${collection}/${id}.json`,
         })
       );
@@ -57,10 +64,10 @@ export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
     }
   }
 
-  async function listEntries(collection: string) {
-    const response = await client.send(
+  async listEntries(collection: string) {
+    const response = await this.client.send(
       new ListObjectsV2Command({
-        Bucket: bucket,
+        Bucket: this.bucket,
         Prefix: `${collection}/`,
       })
     );
@@ -68,20 +75,20 @@ export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
     return files;
   }
 
-  async function count(collection: string) {
-    const files = await listEntries(collection);
+  async count(collection: string) {
+    const files = await this.listEntries(collection);
     return files.length;
   }
 
-  async function all(collection: string) {
-    const files = await listEntries(collection);
-    return await Promise.all(files.map((file) => getByKey(file.Key!)));
+  async all(collection: string) {
+    const files = await this.listEntries(collection);
+    return await Promise.all(files.map((file) => this.getByKey(file.Key!)));
   }
 
-  async function upsert(collection: string, data: Model) {
-    await client.send(
+  async upsert(collection: string, data: Model) {
+    await this.client.send(
       new PutObjectCommand({
-        Bucket: bucket,
+        Bucket: this.bucket,
         Key: `${collection}/${data.id}.json`,
         Body: JSON.stringify(data),
         ContentType: "application/json",
@@ -89,31 +96,31 @@ export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
     );
   }
 
-  async function create(collection: string, data: Model) {
-    const doesKeyAlreadyExist = await exists(collection, data.id);
+  async create(collection: string, data: Model) {
+    const doesKeyAlreadyExist = await this.exists(collection, data.id);
     if (doesKeyAlreadyExist) {
       throw new DuplicateKeyError(
         `Key ${collection}/${data.id}.json already exists`
       );
     }
 
-    await upsert(collection, data);
+    await this.upsert(collection, data);
   }
 
-  async function update(collection: string, data: Model) {
-    const doesKeyAlreadyExist = await exists(collection, data.id);
+  async update(collection: string, data: Model) {
+    const doesKeyAlreadyExist = await this.exists(collection, data.id);
     if (!doesKeyAlreadyExist) {
       throw new KeyDoesNotExistError(
         `Key ${collection}/${data.id}.json does not exist`
       );
     }
 
-    await upsert(collection, data);
+    await this.upsert(collection, data);
   }
 
-  async function createMany(collection: string, data: Array<Model>) {
+  async createMany(collection: string, data: Array<Model>) {
     const entriesExist = await Promise.all(
-      data.map((data) => exists(collection, data.id))
+      data.map((data) => this.exists(collection, data.id))
     );
 
     const someExist = entriesExist.some((exists) => exists);
@@ -124,51 +131,38 @@ export function createS3Adapter(...args: CreateS3AdapterParams): Adapter {
       );
     }
 
-    await Promise.all(data.map((data) => upsert(collection, data)));
+    await Promise.all(data.map((data) => this.upsert(collection, data)));
   }
 
-  async function deleteObject(collection: string, id: string) {
-    await client.send(
+  async deleteObject(collection: string, id: string) {
+    await this.client.send(
       new DeleteObjectCommand({
-        Bucket: bucket,
+        Bucket: this.bucket,
         Key: `${collection}/${id}.json`,
       })
     );
   }
 
-  async function deleteMany(collection: string, ids: Array<string>) {
+  async deleteMany(collection: string, ids: Array<string>) {
     const entriesExist = await Promise.all(
-      ids.map((id) => exists(collection, id))
+      ids.map((id) => this.exists(collection, id))
     );
 
-    const someExist = entriesExist.some((exists) => exists);
+    const allExist = entriesExist.every((exists) => exists);
 
-    if (someExist) {
-      throw new DuplicateKeyError(
-        "Cannot delete items because some key already exist"
+    if (!allExist) {
+      throw new KeyDoesNotExistError(
+        "Cannot delete items because some key does not exist"
       );
     }
 
-    await Promise.all(ids.map((id) => deleteObject(collection, id)));
+    await Promise.all(ids.map((id) => this.deleteObject(collection, id)));
   }
 
-  async function deleteAll(collection: string) {
-    const files = await listEntries(collection);
-    await Promise.all(files.map((file) => deleteObject(collection, file.Key!)));
+  async deleteAll(collection: string) {
+    const files = await this.listEntries(collection);
+    await Promise.all(
+      files.map((file) => this.deleteObject(collection, file.Key!))
+    );
   }
-
-  return {
-    getByKey,
-    getById,
-    exists,
-    count,
-    all,
-    upsert,
-    create,
-    update,
-    createMany,
-    deleteObject,
-    deleteMany,
-    deleteAll,
-  };
 }

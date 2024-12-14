@@ -20,13 +20,7 @@ type ClyveClient<T extends Schema> = {
   };
 };
 
-export type CreateClientParams = [adapter: Adapter];
-
-export function createClient<T extends Schema>(
-  ...args: CreateClientParams
-): ClyveClient<T> {
-  const [adapter] = args;
-
+export function createClient<T extends Schema>(adapter: Adapter) {
   return new Proxy(
     {},
     {

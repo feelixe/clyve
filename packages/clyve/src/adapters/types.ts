@@ -1,6 +1,6 @@
 import { Model } from "model.js";
 
-export type Adapter = {
+export interface Adapter {
   getByKey: (key: string) => Promise<Model>;
   getById: (collection: string, id: string) => Promise<Model>;
   exists: (collection: string, id: string) => Promise<boolean>;
@@ -13,4 +13,4 @@ export type Adapter = {
   deleteObject: (collection: string, id: string) => Promise<void>;
   deleteMany: (collection: string, ids: string[]) => Promise<void>;
   deleteAll: (collection: string) => Promise<void>;
-};
+}
