@@ -73,6 +73,7 @@ export class FileSystemAdapter implements Adapter {
       `${collection}/${data.id}.json`
     );
     await this.writeFileWithDirs(filePath, JSON.stringify(data));
+    return data;
   }
 
   async create(collection: string, data: Model) {
@@ -83,7 +84,7 @@ export class FileSystemAdapter implements Adapter {
       );
     }
 
-    await this.upsert(collection, data);
+    return await this.upsert(collection, data);
   }
 
   async update(collection: string, data: Model) {
@@ -94,7 +95,7 @@ export class FileSystemAdapter implements Adapter {
       );
     }
 
-    await this.upsert(collection, data);
+    return await this.upsert(collection, data);
   }
 
   async createMany(collection: string, data: Array<Model>) {
@@ -109,7 +110,7 @@ export class FileSystemAdapter implements Adapter {
       );
     }
 
-    await Promise.all(data.map((data) => this.upsert(collection, data)));
+    return await Promise.all(data.map((data) => this.upsert(collection, data)));
   }
 
   async deleteObject(collection: string, id: string) {

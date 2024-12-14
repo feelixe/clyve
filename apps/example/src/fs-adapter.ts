@@ -24,7 +24,7 @@ export const s3Client = new S3Client({
   },
 });
 
-const adapter = new FileSystemAdapter("./data/masoud");
+const adapter = new FileSystemAdapter("./data");
 const db = createClient<MySchema>(adapter);
 
 await db.users.deleteAll();

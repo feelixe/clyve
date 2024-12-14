@@ -19,7 +19,7 @@ Install required packages
 npm install clyve
 ```
 
-Install the S3 client if you want to use the s3 adapter
+Install the S3 client if you want to use the S3 adapter
 ```bash
 npm install @aws-sdk/client-s3
 ```
@@ -55,6 +55,29 @@ type MySchema = {
 // Create Clyve client.
 const bucketName = "my-bucket";
 const adapter = new S3Adapter(s3Client, bucketName);
+const db = createClient<MySchema>(adapter);
+```
+
+## Usage with file system adapter
+```typescript
+import { createClient } from "clyve";
+import { FileSystemAdapter } from "clyve/adapters";
+
+// Create your schema type, id is required in every model.
+type MySchema = {
+  users: {
+    id: string;
+    name: string;
+  };
+  products: {
+    id: string;
+    name: string;
+    price: number;
+  };
+};
+
+// Create Clyve client.
+const adapter = new FileSystemAdapter("./data");
 const db = createClient<MySchema>(adapter);
 ```
 
