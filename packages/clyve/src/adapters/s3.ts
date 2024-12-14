@@ -64,7 +64,7 @@ export class S3Adapter implements Adapter {
     }
   }
 
-  async listEntries(collection: string) {
+  private async listEntries(collection: string) {
     const response = await this.client.send(
       new ListObjectsV2Command({
         Bucket: this.bucket,
