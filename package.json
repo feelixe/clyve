@@ -2,7 +2,7 @@
   "name": "clyve-workspace",
   "private": true,
   "scripts": {
-    "build": "pnpm run -r build",
+    "build": "pnpm run --parallel --stream -r build",
     "dev": "pnpm run --parallel --stream -r dev"
   },
   "keywords": [],

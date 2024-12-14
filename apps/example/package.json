@@ -4,7 +4,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "exec": "vite-node ./src/index.ts"
+    "s3": "vite-node ./src/s3-adapter.ts",
+    "fs": "vite-node ./src/fs-adapter.ts"
   },
   "keywords": [],
   "author": "",
