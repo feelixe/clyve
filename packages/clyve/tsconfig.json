@@ -37,8 +37,7 @@
     "sourceMap": true
   },
   "include": [
-    "src/**/*",
-    "../../apps/example/src/temp.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules"
