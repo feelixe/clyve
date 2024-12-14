@@ -1,0 +1,37 @@
+{
+  "name": "clyve",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A lightweight TypeScript client that uses AWS S3 as a schema-driven, JSON-based database.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./errors": {
+      "import": "./dist/errors.js",
+      "types": "./dist/errors.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --incremental --preserveWatchOutput"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.709.0",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vite-node": "^2.1.8"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@clyve/example",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "exec": "vite-node ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.709.0",
+    "dotenv": "^16.4.7",
+    "clyve": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vite-node": "^2.1.8"
+  }
+}

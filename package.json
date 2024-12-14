@@ -1,0 +1,18 @@
+{
+  "name": "clyve-workspace",
+  "private": true,
+  "scripts": {
+    "build": "pnpm run -r build",
+    "dev": "pnpm run --parallel --stream -r dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@8.6.7+sha512.bd1216a43fcbe2985ff41936a3f3b64c347c7c5a099e962ba764caa9321917fa99dbfae02f7a8a5f31e87c781b5ec8a7c0ca12122833dbcb2a937a50fb230441",
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.13.0",
+    "typescript-eslint": "^8.18.0"
+  }
+}
