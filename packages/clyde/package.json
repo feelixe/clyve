@@ -3,6 +3,11 @@
   "type": "module",
   "version": "0.1.0",
   "description": "A lightweight TypeScript client that uses AWS S3 as a schema-driven, JSON-based database.",
+  "homepage": "https://github.com/feelixe/clyve",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/feelixe/clyve.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
