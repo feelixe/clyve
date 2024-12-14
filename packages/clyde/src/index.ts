@@ -148,7 +148,7 @@ export function createClient<T extends Schema>(
       );
     }
 
-    await Promise.all(data.map((data) => create(collection, data)));
+    await Promise.all(data.map((data) => upsert(collection, data)));
   }
 
   async function deleteObject(collection: string, id: string) {
