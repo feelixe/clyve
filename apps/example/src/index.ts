@@ -1,10 +1,7 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
-import { DuplicateKeyError } from "clyve/errors";
 import { S3Adapter } from "clyve/adapters";
 import "dotenv/config";
-
-new DuplicateKeyError();
 
 type MySchema = {
   users: {

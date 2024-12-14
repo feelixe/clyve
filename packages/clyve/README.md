@@ -1,5 +1,5 @@
 # Clyve
-A lightweight client for using AWS S3 as a database. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s affordability, durability, and scalability, enabling simple CRUD operations on structured data.
+A lightweight client for using either AWS S3 or the filesystem as a database via adapters. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s scalability or the simplicity of the filesystem, enabling easy CRUD operations on structured data.
 
 ## Key Features
 - 🕒 Quick to prototype and iterate with.
@@ -7,7 +7,7 @@ A lightweight client for using AWS S3 as a database. Perfect for quick MVPs or p
 - 💸 Low cost.
 - 👨‍💻 Simple and developer friendly client.
 - 📠 No code generation or build step.
-- 📦 No third-party dependencies (relies on AWS SDK as a peer dependency).
+- 📦 No third-party dependencies.
 - 🔐 Fully type-safe with strong TypeScript support.
 
 ## Notes
@@ -16,10 +16,15 @@ A lightweight client for using AWS S3 as a database. Perfect for quick MVPs or p
 ## Installation
 Install required packages
 ```bash
-npm install clyve @aws-sdk/client-s3
+npm install clyve
 ```
 
-## Usage
+Install the S3 client if you want to use the s3 adapter
+```bash
+npm install @aws-sdk/client-s3
+```
+
+## Usage with S3 Adapter
 ```typescript
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
@@ -47,10 +52,10 @@ type MySchema = {
   };
 };
 
-const bucketName = "my-bucket";
-
 // Create Clyve client.
-const db = createClient<MySchema>(s3Client, bucketName);
+const bucketName = "my-bucket";
+const adapter = new S3Adapter(s3Client, bucketName);
+const db = createClient<MySchema>(adapter);
 ```
 
 ## Operations
