@@ -28,7 +28,7 @@ importers:
         version: 3.709.0
       clyve:
         specifier: workspace:*
-        version: link:../../packages/clyde
+        version: link:../../packages/clyve
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -43,7 +43,7 @@ importers:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@22.10.2)
 
-  packages/clyde:
+  packages/clyve:
     devDependencies:
       '@aws-sdk/client-s3':
         specifier: ^3.709.0
