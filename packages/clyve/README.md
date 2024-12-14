@@ -28,6 +28,7 @@ npm install @aws-sdk/client-s3
 ```typescript
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
+import { S3Adapter } from "clyve/adapters";
 
 // Create an S3 client.
 export const s3Client = new S3Client({
