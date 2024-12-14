@@ -46,7 +46,7 @@ importers:
   packages/clyve:
     devDependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.709.0
+        specifier: ^3.352.0
         version: 3.709.0
       '@types/node':
         specifier: ^22.10.2
