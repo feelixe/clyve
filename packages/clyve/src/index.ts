@@ -4,12 +4,14 @@ import { Model } from "./model.js";
 
 type Schema = Record<string, Model>;
 
-type ClyveClient<T extends Schema> = {
+type OmitId<TModel> = Omit<TModel, "id">;
+
+type ClyveClient<T extends Schema, TId extends boolean> = {
   [K in keyof T]: {
     get: (id: string) => Promise<T[K]>;
     all: () => Promise<Array<T[K]>>;
     count: () => Promise<number>;
-    create: (data: T[K]) => Promise<T[K]>;
+    create: (data: TId extends true ? OmitId<T[K]> : T[K]) => Promise<T[K]>;
     createMany: (data: Array<T[K]>) => Promise<Array<T[K]>>;
     delete: (id: string) => Promise<void>;
     deleteMany: (id: Array<string>) => Promise<void>;
@@ -20,9 +22,22 @@ type ClyveClient<T extends Schema> = {
   };
 };
 
+export type CreateClientOptions = {
+  getId: () => string;
+};
+
 export function createClient<T extends Schema>(
   adapter: Adapter
-): ClyveClient<T> {
+): ClyveClient<T, false>;
+export function createClient<T extends Schema>(
+  adapter: Adapter,
+  options: CreateClientOptions
+): ClyveClient<T, true>;
+export function createClient<T extends Schema>(
+  adapter: Adapter,
+  opts?: CreateClientOptions
+): ClyveClient<T, boolean> {
+  console.log(opts);
   return new Proxy(
     {},
     {
@@ -49,5 +64,5 @@ export function createClient<T extends Schema>(
         );
       },
     }
-  ) as ClyveClient<T>;
+  ) as ClyveClient<T, boolean>;
 }
