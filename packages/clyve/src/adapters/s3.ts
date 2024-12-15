@@ -9,11 +9,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { Adapter } from "./types.js";
-import {
-  DuplicateKeyError,
-  KeyDoesNotExistError,
-  NoBodyError,
-} from "../errors.js";
+import { KeyDoesNotExistError, NoBodyError } from "../errors.js";
 import { Model } from "../model.js";
 
 export type S3AdapterConstructorParams = [s3Client: S3Client, bucket: string];
@@ -75,7 +71,7 @@ export class S3Adapter implements Adapter {
     }
   }
 
-  private async listEntries(collection: string) {
+  async keys(collection: string) {
     const response = await this.client.send(
       new ListObjectsV2Command({
         Bucket: this.bucket,
@@ -83,17 +79,9 @@ export class S3Adapter implements Adapter {
       })
     );
     const files = response.Contents ?? [];
-    return files;
-  }
-
-  async count(collection: string) {
-    const files = await this.listEntries(collection);
-    return files.length;
-  }
-
-  async all(collection: string) {
-    const files = await this.listEntries(collection);
-    return await Promise.all(files.map((file) => this.getByKey(file.Key!)));
+    return files
+      .filter((file) => file.Key !== undefined)
+      .map((file) => file.Key!);
   }
 
   async upsert(collection: string, data: Model) {
@@ -108,44 +96,6 @@ export class S3Adapter implements Adapter {
     return data;
   }
 
-  async create(collection: string, data: Model) {
-    const doesKeyAlreadyExist = await this.exists(collection, data.id);
-    if (doesKeyAlreadyExist) {
-      throw new DuplicateKeyError(
-        `Key ${collection}/${data.id}.json already exists`
-      );
-    }
-
-    return await this.upsert(collection, data);
-  }
-
-  async update(collection: string, data: Model) {
-    const doesKeyAlreadyExist = await this.exists(collection, data.id);
-    if (!doesKeyAlreadyExist) {
-      throw new KeyDoesNotExistError(
-        `Key ${collection}/${data.id}.json does not exist`
-      );
-    }
-
-    return await this.upsert(collection, data);
-  }
-
-  async createMany(collection: string, data: Array<Model>) {
-    const entriesExist = await Promise.all(
-      data.map((data) => this.exists(collection, data.id))
-    );
-
-    const someExist = entriesExist.some((exists) => exists);
-
-    if (someExist) {
-      throw new DuplicateKeyError(
-        "Cannot create items because some key already exist"
-      );
-    }
-
-    return await Promise.all(data.map((data) => this.upsert(collection, data)));
-  }
-
   async deleteObject(collection: string, id: string) {
     await this.client.send(
       new DeleteObjectCommand({
@@ -153,38 +103,5 @@ export class S3Adapter implements Adapter {
         Key: `${collection}/${id}.json`,
       })
     );
-  }
-
-  async deleteMany(collection: string, ids: Array<string>) {
-    const entriesExist = await Promise.all(
-      ids.map((id) => this.exists(collection, id))
-    );
-
-    const allExist = entriesExist.every((exists) => exists);
-
-    if (!allExist) {
-      throw new KeyDoesNotExistError(
-        "Cannot delete items because some key does not exist"
-      );
-    }
-
-    await Promise.all(ids.map((id) => this.deleteObject(collection, id)));
-  }
-
-  async deleteAll(collection: string) {
-    const files = await this.listEntries(collection);
-    await Promise.all(
-      files.map((file) => this.deleteObject(collection, file.Key!))
-    );
-  }
-
-  async edit(
-    collection: string,
-    id: string,
-    fn: (entity: Model) => Model | Promise<Model>
-  ) {
-    const data = await this.getById(collection, id);
-    const modified = await fn(data);
-    return await this.update(collection, modified);
   }
 }

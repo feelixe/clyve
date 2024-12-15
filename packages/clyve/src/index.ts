@@ -1,10 +1,11 @@
 import { CollectionObjectReadOnlyError } from "./errors.js";
 import { Adapter } from "./adapters/types.js";
 import { Model } from "./model.js";
+import { Operations } from "./operations.js";
 
 type Schema = Record<string, Model>;
 
-type ClyveClient<T extends Schema> = {
+export type ClyveClient<T extends Schema> = {
   [K in keyof T]: {
     get: (id: string) => Promise<T[K]>;
     all: () => Promise<Array<T[K]>>;
@@ -25,26 +26,29 @@ type ClyveClient<T extends Schema> = {
 };
 
 export function createClient<T extends Schema>(adapter: Adapter) {
+  const operations = new Operations(adapter);
+
   return new Proxy(
     {},
     {
       get(_, key) {
         const collection = key.toString();
         return {
-          get: (id: string) => adapter.getById(collection, id),
-          all: () => adapter.all(collection),
-          create: (data: Model) => adapter.create(collection, data),
-          delete: (id: string) => adapter.deleteObject(collection, id),
-          deleteMany: (id: Array<string>) => adapter.deleteMany(collection, id),
-          deleteAll: () => adapter.deleteAll(collection),
+          get: (id: string) => operations.get(collection, id),
+          all: () => operations.all(collection),
+          create: (data: Model) => operations.create(collection, data),
           createMany: (data: Array<Model>) =>
-            adapter.createMany(collection, data),
-          count: () => adapter.count(collection),
-          exists: (id: string) => adapter.exists(collection, id),
-          update: (data: Model) => adapter.update(collection, data),
-          upsert: (data: Model) => adapter.upsert(collection, data),
+            operations.createMany(collection, data),
+          delete: (id: string) => operations.deleteObject(collection, id),
+          deleteMany: (id: Array<string>) =>
+            operations.deleteMany(collection, id),
+          deleteAll: () => operations.deleteAll(collection),
+          count: () => operations.count(collection),
+          exists: (id: string) => operations.exists(collection, id),
+          update: (data: Model) => operations.update(collection, data),
+          upsert: (data: Model) => operations.upsert(collection, data),
           edit: (id: string, fn: (entity: Model) => Model | Promise<Model>) =>
-            adapter.edit(collection, id, fn),
+            operations.edit(collection, id, fn),
         };
       },
       set() {

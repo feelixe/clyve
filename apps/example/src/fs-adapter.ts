@@ -13,6 +13,7 @@ type MySchema = {
     price: number;
   };
 };
+
 const adapter = new FileSystemAdapter("./data");
 const db = createClient<MySchema>(adapter);
 
@@ -21,6 +22,4 @@ await db.users.upsert({
   name: "Wall-e",
 });
 
-const user = await db.users.get("1");
-
-console.log(user);
+await db.users.deleteAll();

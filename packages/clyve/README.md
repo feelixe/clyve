@@ -155,3 +155,11 @@ Delete all entries in a collection:
 ```typescript
 await db.users.deleteAll();
 ```
+
+Edit an entry, a shortcut for performing a sequential `.get()` and `.update()` operation.
+```typescript
+await db.users.edit("1", (user) => {
+  user.name = "Wall-e 2";
+  return user;
+});
+```
