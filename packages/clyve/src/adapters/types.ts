@@ -13,4 +13,9 @@ export interface Adapter {
   deleteObject: (collection: string, id: string) => Promise<void>;
   deleteMany: (collection: string, ids: string[]) => Promise<void>;
   deleteAll: (collection: string) => Promise<void>;
+  edit: (
+    collection: string,
+    id: string,
+    fn: (entity: Model) => Model | Promise<Model>
+  ) => Promise<Model>;
 }

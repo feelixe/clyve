@@ -3,6 +3,7 @@ import {
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
+  NoSuchKey,
   NotFound,
   PutObjectCommand,
   S3Client,
@@ -28,12 +29,22 @@ export class S3Adapter implements Adapter {
   }
 
   async getByKey(key: string) {
-    const response = await this.client.send(
-      new GetObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-      })
-    );
+    let response;
+    try {
+      response = await this.client.send(
+        new GetObjectCommand({
+          Bucket: this.bucket,
+          Key: key,
+        })
+      );
+    } catch (error) {
+      if (error instanceof NoSuchKey) {
+        throw new KeyDoesNotExistError(`Key ${key} does not exist`, {
+          cause: error,
+        });
+      }
+      throw error;
+    }
 
     if (!response.Body) {
       throw new NoBodyError("S3 response did not have a body");
@@ -165,5 +176,15 @@ export class S3Adapter implements Adapter {
     await Promise.all(
       files.map((file) => this.deleteObject(collection, file.Key!))
     );
+  }
+
+  async edit(
+    collection: string,
+    id: string,
+    fn: (entity: Model) => Model | Promise<Model>
+  ) {
+    const data = await this.getById(collection, id);
+    const modified = await fn(data);
+    return await this.update(collection, modified);
   }
 }

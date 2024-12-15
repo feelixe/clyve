@@ -19,9 +19,19 @@ export class FileSystemAdapter implements Adapter {
 
   async getByKey(key: string) {
     const filePath = path.resolve(this.basePath, key);
-    const string = await fs.readFile(filePath, "utf-8");
+    let content;
+    try {
+      content = await fs.readFile(filePath, "utf-8");
+    } catch (error) {
+      if (this.isEnoentError(error)) {
+        throw new KeyDoesNotExistError(`Key ${key} does not exist`, {
+          cause: error,
+        });
+      }
+      throw error;
+    }
 
-    return JSON.parse(string);
+    return JSON.parse(content);
   }
 
   async getById(collection: string, id: string) {
@@ -127,7 +137,7 @@ export class FileSystemAdapter implements Adapter {
 
     if (!allExist) {
       throw new KeyDoesNotExistError(
-        "Cannot delete items because some key does not exist"
+        "Could not delete items because some key does not exist"
       );
     }
 
@@ -142,5 +152,15 @@ export class FileSystemAdapter implements Adapter {
         this.deleteObject(collection, `${collection}/${file.name}`)
       )
     );
+  }
+
+  async edit(
+    collection: string,
+    id: string,
+    fn: (entity: Model) => Model | Promise<Model>
+  ) {
+    const data = await this.getById(collection, id);
+    const modified = await fn(data);
+    return await this.update(collection, modified);
   }
 }
