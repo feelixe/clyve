@@ -32,8 +32,4 @@ await db.users.upsert({
   name: "Wall-e",
 });
 
-const exists = await db.users.exists("1");
-
-console.log(exists);
-
 await db.users.deleteAll();
