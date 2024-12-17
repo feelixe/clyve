@@ -1,6 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
-import { S3Adapter } from "clyve/adapters";
+import { S3Provider } from "clyve/providers";
 import "dotenv/config";
 
 type MySchema = {
@@ -24,8 +24,8 @@ export const s3Client = new S3Client({
   },
 });
 
-const adapter = new S3Adapter(s3Client, "scoreboard-app");
-const db = createClient<MySchema>(adapter);
+const provider = new S3Provider(s3Client, "scoreboard-app");
+const db = createClient<MySchema>(provider);
 
 await db.users.upsert({
   id: "1",

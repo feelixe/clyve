@@ -1,5 +1,5 @@
 import { CollectionObjectReadOnlyError } from "./errors.js";
-import { Adapter } from "./adapters/types.js";
+import { Provider } from "./providers/types.js";
 import { Model } from "./model.js";
 import { Operations } from "./operations.js";
 
@@ -25,8 +25,8 @@ export type ClyveClient<T extends Schema> = {
   };
 };
 
-export function createClient<T extends Schema>(adapter: Adapter) {
-  const operations = new Operations(adapter);
+export function createClient<T extends Schema>(provider: Provider) {
+  const operations = new Operations(provider);
 
   return new Proxy(
     {},

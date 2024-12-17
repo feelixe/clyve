@@ -1,5 +1,5 @@
 import { createClient } from "clyve";
-import { FileSystemAdapter } from "clyve/adapters";
+import { FileSystemProvider } from "clyve/providers";
 import "dotenv/config";
 
 type MySchema = {
@@ -14,8 +14,8 @@ type MySchema = {
   };
 };
 
-const adapter = new FileSystemAdapter("./data");
-const db = createClient<MySchema>(adapter);
+const provider = new FileSystemProvider("./data");
+const db = createClient<MySchema>(provider);
 
 await db.users.upsert({
   id: "1",
