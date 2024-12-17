@@ -1,6 +1,6 @@
 import { Model } from "model.js";
 
-export interface Adapter {
+export interface Provider {
   getByKey: (key: string) => Promise<Model>;
   exists: (collection: string, id: string) => Promise<boolean>;
   keys: (collection: string) => Promise<string[]>;

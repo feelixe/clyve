@@ -1,5 +1,5 @@
 # Clyve
-A lightweight client for using either AWS S3 or the filesystem as a database via adapters. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s scalability or the simplicity of the filesystem, enabling easy CRUD operations on structured data.
+A lightweight client for using either AWS S3 or the filesystem as a database via providers. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s scalability or the simplicity of the filesystem, enabling easy CRUD operations on structured data.
 
 ## Key Features
 - 🕒 Quick to prototype and iterate with.
@@ -19,16 +19,16 @@ Install required packages
 npm install clyve
 ```
 
-Install the S3 client if you want to use the S3 adapter
+Install the S3 client if you want to use the S3 provider
 ```bash
 npm install @aws-sdk/client-s3
 ```
 
-## Usage with S3 Adapter
+## Usage with S3 provider
 ```typescript
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
-import { S3Adapter } from "clyve/adapters";
+import { S3Provider } from "clyve/providers";
 
 // Create an S3 client.
 export const s3Client = new S3Client({
@@ -55,14 +55,14 @@ type MySchema = {
 
 // Create Clyve client.
 const bucketName = "my-bucket";
-const adapter = new S3Adapter(s3Client, bucketName);
-const db = createClient<MySchema>(adapter);
+const provider = new S3Provider(s3Client, bucketName);
+const db = createClient<MySchema>(provider);
 ```
 
-## Usage with file system adapter
+## Usage with file system provider
 ```typescript
 import { createClient } from "clyve";
-import { FileSystemAdapter } from "clyve/adapters";
+import { FileSystemProvider } from "clyve/providers";
 
 // Create your schema type, id is required in every model.
 type MySchema = {
@@ -78,8 +78,8 @@ type MySchema = {
 };
 
 // Create Clyve client.
-const adapter = new FileSystemAdapter("./data");
-const db = createClient<MySchema>(adapter);
+const provider = new FileSystemProvider("./data");
+const db = createClient<MySchema>(provider);
 ```
 
 ## Operations

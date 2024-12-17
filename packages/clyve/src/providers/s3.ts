@@ -8,17 +8,17 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { Adapter } from "./types.js";
+import { Provider } from "./types.js";
 import { KeyDoesNotExistError, NoBodyError } from "../errors.js";
 import { Model } from "../model.js";
 
-export type S3AdapterConstructorParams = [s3Client: S3Client, bucket: string];
+export type S3ProviderConstructorParams = [s3Client: S3Client, bucket: string];
 
-export class S3Adapter implements Adapter {
+export class S3Provider implements Provider {
   private client: S3Client;
   private bucket: string;
 
-  constructor(...args: S3AdapterConstructorParams) {
+  constructor(...args: S3ProviderConstructorParams) {
     const [s3Client, bucket] = args;
     this.client = s3Client;
     this.bucket = bucket;

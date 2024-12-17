@@ -4,8 +4,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "s3": "vite-node ./src/s3-adapter.ts",
-    "fs": "vite-node ./src/fs-adapter.ts"
+    "s3": "vite-node ./src/s3-provider.ts",
+    "fs": "vite-node ./src/fs-provider.ts"
   },
   "keywords": [],
   "author": "",

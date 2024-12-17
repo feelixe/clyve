@@ -1,16 +1,16 @@
-import { Adapter } from "./adapters/types.js";
+import { Provider } from "./providers/types.js";
 import { DuplicateKeyError, KeyDoesNotExistError } from "./errors.js";
 import { Model } from "./model.js";
 
 export class Operations {
-  private adapter: Adapter;
+  private provider: Provider;
 
-  constructor(adapter: Adapter) {
-    this.adapter = adapter;
+  constructor(provider: Provider) {
+    this.provider = provider;
   }
 
   async getById(collection: string, id: string) {
-    return await this.adapter.getByKey(`${collection}/${id}.json`);
+    return await this.provider.getByKey(`${collection}/${id}.json`);
   }
 
   async get(collection: string, id: string) {
@@ -18,24 +18,24 @@ export class Operations {
   }
 
   async all(collection: string) {
-    const keys = await this.adapter.keys(collection);
-    return await Promise.all(keys.map((key) => this.adapter.getByKey(key)));
+    const keys = await this.provider.keys(collection);
+    return await Promise.all(keys.map((key) => this.provider.getByKey(key)));
   }
 
   async create(collection: string, data: Model) {
-    const doesKeyAlreadyExist = await this.adapter.exists(collection, data.id);
+    const doesKeyAlreadyExist = await this.provider.exists(collection, data.id);
     if (doesKeyAlreadyExist) {
       throw new DuplicateKeyError(
         `Key ${collection}/${data.id}.json already exists`
       );
     }
 
-    return await this.adapter.upsert(collection, data);
+    return await this.provider.upsert(collection, data);
   }
 
   async createMany(collection: string, data: Array<Model>) {
     const entriesExist = await Promise.all(
-      data.map((data) => this.adapter.exists(collection, data.id))
+      data.map((data) => this.provider.exists(collection, data.id))
     );
     const someExist = entriesExist.some((exists) => exists);
     if (someExist) {
@@ -45,17 +45,17 @@ export class Operations {
     }
 
     return await Promise.all(
-      data.map((data) => this.adapter.upsert(collection, data))
+      data.map((data) => this.provider.upsert(collection, data))
     );
   }
 
   async deleteObject(collection: string, id: string) {
-    await this.adapter.deleteObject(collection, id);
+    await this.provider.deleteObject(collection, id);
   }
 
   async deleteMany(collection: string, ids: Array<string>) {
     const entriesExist = await Promise.all(
-      ids.map((id) => this.adapter.exists(collection, id))
+      ids.map((id) => this.provider.exists(collection, id))
     );
 
     const allExist = entriesExist.every((exists) => exists);
@@ -67,12 +67,12 @@ export class Operations {
     }
 
     await Promise.all(
-      ids.map((id) => this.adapter.deleteObject(collection, id))
+      ids.map((id) => this.provider.deleteObject(collection, id))
     );
   }
 
   async allIds(collection: string) {
-    const keys = await this.adapter.keys(collection);
+    const keys = await this.provider.keys(collection);
     const fileNames = keys.map((key) => key.split("/")[1]);
     const ids = fileNames.map((fileName) => fileName.split(".")[0]);
     return ids;
@@ -81,17 +81,17 @@ export class Operations {
   async deleteAll(collection: string) {
     const ids = await this.allIds(collection);
     await Promise.all(
-      ids.map((id) => this.adapter.deleteObject(collection, id))
+      ids.map((id) => this.provider.deleteObject(collection, id))
     );
   }
 
   async count(collection: string) {
-    const keys = await this.adapter.keys(collection);
+    const keys = await this.provider.keys(collection);
     return keys.length;
   }
 
   async exists(collection: string, id: string) {
-    return await this.adapter.exists(collection, id);
+    return await this.provider.exists(collection, id);
   }
 
   async update(collection: string, data: Model) {
@@ -106,7 +106,7 @@ export class Operations {
   }
 
   async upsert(collection: string, data: Model) {
-    return await this.adapter.upsert(collection, data);
+    return await this.provider.upsert(collection, data);
   }
 
   async edit(

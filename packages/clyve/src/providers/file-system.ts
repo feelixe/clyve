@@ -1,10 +1,10 @@
 import { Model } from "../model.js";
 import { KeyDoesNotExistError } from "../errors.js";
-import { Adapter } from "./types.js";
+import { Provider } from "./types.js";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-export class FileSystemAdapter implements Adapter {
+export class FileSystemProvider implements Provider {
   private basePath: string;
 
   constructor(basePath: string) {

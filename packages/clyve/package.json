@@ -19,9 +19,9 @@
       "import": "./dist/errors.js",
       "types": "./dist/errors.d.ts"
     },
-    "./adapters": {
-      "import": "./dist/adapters/index.js",
-      "types": "./dist/adapters/index.d.ts"
+    "./providers": {
+      "import": "./dist/providers/index.js",
+      "types": "./dist/providers/index.d.ts"
     }
   },
   "files": [
