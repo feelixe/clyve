@@ -1,5 +1,6 @@
 # Clyve
 [![npm version](https://badge.fury.io/js/clyve.svg?icon=si%3Anpm)](https://badge.fury.io/js/clyve)
+
 A lightweight client for using either AWS S3 or the filesystem as a database via providers. Perfect for quick MVPs or prototypes, it lets you store, retrieve, and manage JSON objects without a full database setup. While not suited for production, it takes advantage of S3’s scalability or the simplicity of the filesystem, enabling easy CRUD operations on structured data.
 
 ## Key Features
