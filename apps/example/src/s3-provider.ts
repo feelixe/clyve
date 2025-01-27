@@ -27,9 +27,6 @@ export const s3Client = new S3Client({
 const provider = new S3Provider(s3Client, "scoreboard-app");
 const db = createClient<MySchema>(provider);
 
-await db.users.upsert({
-  id: "1",
-  name: "Wall-e",
-});
+const users = await db.users.all();
 
-await db.users.deleteAll();
+console.log(users);
