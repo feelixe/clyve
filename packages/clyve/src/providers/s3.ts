@@ -50,10 +50,6 @@ export class S3Provider implements Provider {
     return JSON.parse(string);
   }
 
-  async getById(collection: string, id: string) {
-    return await this.getByKey(`${collection}/${id}.json`);
-  }
-
   async exists(collection: string, id: string) {
     try {
       await this.client.send(
@@ -78,6 +74,7 @@ export class S3Provider implements Provider {
         Prefix: `${collection}/`,
       })
     );
+
     const files = response.Contents ?? [];
     return files
       .filter((file) => file.Key !== undefined)
