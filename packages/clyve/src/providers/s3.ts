@@ -68,17 +68,32 @@ export class S3Provider implements Provider {
   }
 
   async keys(collection: string) {
-    const response = await this.client.send(
-      new ListObjectsV2Command({
-        Bucket: this.bucket,
-        Prefix: `${collection}/`,
-      })
-    );
+    const accumulatedKeys: string[] = [];
+    let continuationToken: string | undefined;
 
-    const files = response.Contents ?? [];
-    return files
-      .filter((file) => file.Key !== undefined)
-      .map((file) => file.Key!);
+    while (true) {
+      const response = await this.client.send(
+        new ListObjectsV2Command({
+          Bucket: this.bucket,
+          Prefix: `${collection}/`,
+          MaxKeys: 50,
+          ContinuationToken: continuationToken,
+        })
+      );
+
+      const files = response.Contents ?? [];
+      const keys = files
+        .filter((file) => file.Key !== undefined)
+        .map((file) => file.Key!);
+      accumulatedKeys.push(...keys);
+
+      if (response.IsTruncated) {
+        continuationToken = response.NextContinuationToken;
+        continue;
+      }
+      break;
+    }
+    return accumulatedKeys;
   }
 
   async upsert(collection: string, data: Model) {
