@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "s3": "bun ./src/s3-provider.ts",
-    "fs": "bun ./src/fs-provider.ts",
-    "bun-s3": "bun ./src/bun-s3-provider.ts"
+    "fs": "bun ./src/fs-provider.ts"
   },
   "keywords": [],
   "author": "",
