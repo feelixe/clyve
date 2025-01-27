@@ -4,8 +4,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "s3": "vite-node ./src/s3-provider.ts",
-    "fs": "vite-node ./src/fs-provider.ts"
+    "s3": "bun ./src/s3-provider.ts",
+    "fs": "bun ./src/fs-provider.ts",
+    "bun-s3": "bun ./src/bun-s3-provider.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +17,6 @@
     "clyve": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
-    "vite-node": "^2.1.8"
+    "typescript": "^5.7.2"
   }
 }
