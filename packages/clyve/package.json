@@ -22,6 +22,10 @@
     "./providers": {
       "import": "./dist/providers/index.js",
       "types": "./dist/providers/index.d.ts"
+    },
+    "./cache": {
+      "import": "./dist/cache/index.js",
+      "types": "./dist/cache/index.d.ts"
     }
   },
   "files": [

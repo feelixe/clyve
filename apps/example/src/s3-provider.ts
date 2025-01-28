@@ -1,5 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
+import { Cache } from "clyve/cache";
 import { S3Provider } from "clyve/providers";
 import "dotenv/config";
 
@@ -25,8 +26,12 @@ export const s3Client = new S3Client({
 });
 
 const provider = new S3Provider(s3Client, "scoreboard-app");
-const db = createClient<MySchema>(provider);
+const cache = new Cache({ provider });
 
-const users = await db.users.all();
+const db = createClient<MySchema>(cache);
 
-console.log(users);
+const user1 = await db.users.all();
+
+const user2 = await db.users.all();
+
+console.log(cache.debugGetStore());
