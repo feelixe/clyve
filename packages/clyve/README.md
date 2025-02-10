@@ -30,7 +30,7 @@ npm install @aws-sdk/client-s3
 ```typescript
 import { S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "clyve";
-import { S3Provider } from "clyve/providers";
+import { S3Provider } from "clyve/providers/s3";
 
 // Create an S3 client.
 export const s3Client = new S3Client({
@@ -64,7 +64,7 @@ const db = createClient<MySchema>(provider);
 ## Usage with file system provider
 ```typescript
 import { createClient } from "clyve";
-import { FileSystemProvider } from "clyve/providers";
+import { FileSystemProvider } from "clyve/providers/fs";
 
 // Create your schema type, id is required in every model.
 type MySchema = {

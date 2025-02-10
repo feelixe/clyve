@@ -1,7 +1,7 @@
 {
   "name": "clyve",
   "type": "module",
-  "version": "2.0.2",
+  "version": "3.0.0-rc1",
   "description": "A lightweight TypeScript client that uses AWS S3 or the file system as a schema-driven, JSON-based database.",
   "homepage": "https://github.com/feelixe/clyve",
   "repository": {
@@ -19,9 +19,13 @@
       "import": "./dist/errors.js",
       "types": "./dist/errors.d.ts"
     },
-    "./providers": {
-      "import": "./dist/providers/index.js",
-      "types": "./dist/providers/index.d.ts"
+    "./providers/fs": {
+      "import": "./dist/providers/fs.js",
+      "types": "./dist/providers/fs.d.ts"
+    },
+    "./providers/s3": {
+      "import": "./dist/providers/s3.js",
+      "types": "./dist/providers/s3.d.ts"
     },
     "./cache": {
       "import": "./dist/cache/index.js",
@@ -36,7 +40,8 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "dev": "tsc --watch --incremental --preserveWatchOutput"
+    "dev": "tsc --watch --incremental --preserveWatchOutput",
+    "publish-package": "bun publish.ts"
   },
   "keywords": [],
   "author": "",
